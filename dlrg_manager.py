@@ -59,24 +59,16 @@ class Bill_Import:
     def add_bill_item(self, bill_index, product_name, size, price, quantity):
         bill = self.bills[bill_index]
         bill["bill_items"].append({
-            "mitglieds_no": bill["mitglieds_no"],
-            "bill_index": bill_index,
             "bill_title": f"Wachdienstbekleidung 2025 {bill['first_name']} {bill['last_name']}",
-            "billing_date": self.billing_date,
             "item_title": product_name,
             "item_description": f"Größe: {size}" if size else "",
             "quantity": quantity,
-            "price": price,
-            "due_days": self.due_days,
-            "buchhaltungskonto": self.buchhaltungskonto,
-            "sk42_sphaere": self.sk42_sphaere,
-            "mwst_satz": self.mwst_satz,
-            "email": bill["email"],
+            "price": price
         })
 
     def write_import_file(self, output_path):
         with output_path.open("w", encoding="utf-8") as file:
-            for bill in self.bills:
-                for item in bill["bill_items"]:
-                    line = f"{item['mitglieds_no']};{item['bill_index']};{item['bill_title']};{item['billing_date']};{item['item_title']};{item['item_description']};{item['quantity']};{item['price']:.2f};{item['due_days']};{item['buchhaltungskonto']};{item['sk42_sphaere']};{item['mwst_satz']:.2f};{item['email']}\n"
+            for bill_index, bill in enumerate(self.bills):
+                for item_index, item in enumerate(bill["bill_items"]):
+                    line = f"{bill['mitglieds_no']};{bill_index};{item_index};{item['bill_title']};{self.billing_date};{item['item_title']};{item['item_description']};{item['quantity']};{item['price']:.2f};{self.due_days};{self.buchhaltungskonto};{self.sk42_sphaere};{self.mwst_satz:.2f};{bill['email']}\n"
                     file.write(line)
