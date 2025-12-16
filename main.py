@@ -1,8 +1,18 @@
 from pathlib import Path
 from typing import Any
+import dlrg_manager
 
-FILENAME = "Bekleidung25.csv"
-HAS_HEADER = True
+KAUFE_FILENAME = "Bekleidung25.csv"
+KAUFE_SEPERATOR = ";"
+KAUFE_HAS_HEADER = True
+
+MITGLIEDER_FILENAME = "mitglieder.csv"
+MITGLIEDER_SEPERATOR = ","
+MITGLIEDER_HAS_HEADER = True
+
+EMAIL_FILENAME = "Mailadressen.csv"
+EMAIL_SEPERATOR = ","
+EMAIL_HAS_HEADER = True
 
 def normalize_price(price: str) -> float:
     price = price.replace(",", ".")
@@ -11,13 +21,16 @@ def normalize_price(price: str) -> float:
     
     return float(price)
 
+def normalize_string(s: str) -> str:
+    return s.replace("\"", "").strip()
+
 def extract_bill_item(bill_item: list[str]) -> dict[str, Any]:
     return {
-        "first_name": bill_item[0],
-        "last_name": bill_item[1],
-        "product_number": bill_item[2],
-        "product_name": bill_item[3],
-        "size": bill_item[8],
+        "first_name": normalize_string(bill_item[0]),
+        "last_name": normalize_string(bill_item[1]),
+        "product_number": normalize_string(bill_item[2]),
+        "product_name": normalize_string(bill_item[3]),
+        "size": normalize_string(bill_item[8]),
         "price": normalize_price(bill_item[6]),
         "quantity": int(bill_item[7])
     }
@@ -40,10 +53,10 @@ def import_bills(file_path: Path) -> dict[tuple, list[dict[str: Any]]]:
     with file_path.open("r", encoding="utf-8") as file:
         csv = file.read()
         for i, line in enumerate(csv.splitlines()):
-            if HAS_HEADER and i == 0:
+            if KAUFE_HAS_HEADER and i == 0:
                 continue
 
-            bill_item = line.split(";")
+            bill_item = line.split(KAUFE_SEPERATOR)
             bill_item = extract_bill_item(bill_item)
 
             if (bill_item["first_name"], bill_item["last_name"]) not in bills:
@@ -53,28 +66,24 @@ def import_bills(file_path: Path) -> dict[tuple, list[dict[str: Any]]]:
 
     return bills
 
-def export_bill(bill_items: list[dict[str: Any]]) -> None:
-    first_name = bill_items[0]['first_name']
-    last_name = bill_items[0]['last_name']
-    print(f"Rechnung für {first_name} {last_name}:")
-    print("-" * 40)
-    for item in bill_items:
-        product_name = item['product_name']
-        size = item['size']
-        price = item['price']
-        quantity = item['quantity']
-        total_price = price * quantity
-        size_str = f" (Größe: {size})" if size else ""
-        print(f"{product_name}{size_str}: {quantity} x {price:.2f} € = {total_price:.2f} €")
-    print("-" * 40)
-    total_sum = sum(item['price'] * item['quantity'] for item in bill_items)
-    print(f"Gesamtsumme: {total_sum:.2f} €")
-
-
-import_path = Path.cwd() / FILENAME
+import_path = Path.cwd() / KAUFE_FILENAME
 bills: dict[tuple, list[dict[str: Any]]] = import_bills(import_path)
 
 add_discount(bills, "Zuschuss Wachdienst Bekleidung", 40.0)
+
+manager_bill_import = dlrg_manager.Bill_Import(
+    billing_date="2024-01-01",
+    due_days=14,
+    buchhaltungskonto="40900",
+    sk42_sphaere="31",
+    mwst_satz=0.0,
+    mitglieder_path=Path.cwd() / MITGLIEDER_FILENAME,
+    mitglieder_has_header=MITGLIEDER_HAS_HEADER,
+    mitglieder_seperator=MITGLIEDER_SEPERATOR,
+    email_adress_path=Path.cwd() / EMAIL_FILENAME,
+    email_adress_has_header=EMAIL_HAS_HEADER,
+    email_adress_seperator=EMAIL_SEPERATOR
+)
 
 for bill_key, bill_items in bills.items():
     total = sum(item['price'] * item['quantity'] for item in bill_items)
@@ -82,5 +91,14 @@ for bill_key, bill_items in bills.items():
     if total <= 0.0:
         continue
 
-    export_bill(bill_items)
-    print()
+    bill_index = manager_bill_import.add_bill(bill_key[0], bill_key[1])
+    for item in bill_items:
+        manager_bill_import.add_bill_item(
+            bill_index,
+            item['product_name'],
+            item['size'],
+            item['price'],
+            item['quantity']
+        )
+
+manager_bill_import.write_import_file(Path.cwd() / "bill_import.csv")
