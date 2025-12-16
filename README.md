@@ -27,9 +27,18 @@ python3 main.py
 ISO 8859-1, leere Zeile am Ende
 
 # abluaf
+## Mitglieder exportieren
+Extras / Auswertungen:
+Berechtigung: `2_GR_Auswertungen`
+- Alle Mitglieder nach Name
+- Auswertung durchführen
+- Abfrage starten
+- Daten exportieren (XLSX)
+- Datei öffnen
+
 ## import im DLRG-Manager
 Einstellungen / Finanzen / Rechnungsimport:
-Berechtigun: `2_GR_Rechnungen`
+Berechtigung: `2_GR_Rechnungen`
 - Geschäftsbereich:
 - Art der Mitgliedsnummer: "Nummernkreis - Nummer"
 - Erste Spalte enthält Überschrift: "Ja"
