@@ -2,6 +2,12 @@ from pathlib import Path
 from typing import Any
 import dlrg_manager
 
+BILLING_DATE = "2025-12-17"
+DUE_DAYS = 14
+BUCHHALTUNGSKONTO = "40900"
+SK42_SPHAERE = "31"
+MWST_SATZ = 0.0
+
 KAUFE_FILENAME = "Bekleidung25.csv"
 KAUFE_SEPERATOR = ";"
 KAUFE_HAS_HEADER = True
@@ -72,11 +78,11 @@ bills: dict[tuple, list[dict[str: Any]]] = import_bills(import_path)
 add_discount(bills, "Zuschuss Wachdienst Bekleidung", 40.0)
 
 manager_bill_import = dlrg_manager.Bill_Import(
-    billing_date="2024-01-01",
-    due_days=14,
-    buchhaltungskonto="40900",
-    sk42_sphaere="31",
-    mwst_satz=0.0,
+    billing_date=BILLING_DATE,
+    due_days=DUE_DAYS,
+    buchhaltungskonto=BUCHHALTUNGSKONTO,
+    sk42_sphaere=SK42_SPHAERE,
+    mwst_satz=MWST_SATZ,
     mitglieder_path=Path.cwd() / MITGLIEDER_FILENAME,
     mitglieder_has_header=MITGLIEDER_HAS_HEADER,
     mitglieder_seperator=MITGLIEDER_SEPERATOR,
