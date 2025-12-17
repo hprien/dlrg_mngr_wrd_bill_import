@@ -66,9 +66,26 @@ class Bill_Import:
             "price": price
         })
 
+    def __date_plus_days(self, date_str, days):
+        from datetime import datetime, timedelta
+
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+        new_date_obj = date_obj + timedelta(days=days)
+        return new_date_obj.strftime("%d.%m.%Y")
+    
+    def __normalize_date(self, date_str):
+        from datetime import datetime
+
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+        return date_obj.strftime("%d.%m.%Y")
+
+    def __normalize_float(self, float):
+        return f"{float:.2f}".replace(".", ",")
+
     def write_import_file(self, output_path):
         with output_path.open("w", encoding="utf-8") as file:
+            file.write("Mitgliedsnummer;Datensatztyp;RechnungId;RechnungBezeichnung;RechnungDatum;PositionId;PositionBezeichnung;PositionBeschreibung;Menge;Einzelpreis;Inkasso;Zustellung;Zahlungsziel;Intervall;Termin;Faelligkeit;Ende;Mwst;Vermerk;Spendenfaehig;Spendenart;Buchhaltungskonto;SKR42 Sphaere;Steuerschluessel;Kostenstelle;Auswertungskennziffer;Nachlass;Nachlassgrund;Empfaengeremail;Zusatzinformationen\r\n")
             for bill_index, bill in enumerate(self.bills):
                 for item_index, item in enumerate(bill["bill_items"]):
-                    line = f"{bill['mitglieds_no']};{bill_index};{item_index};{item['bill_title']};{self.billing_date};{item['item_title']};{item['item_description']};{item['quantity']};{item['price']:.2f};{self.due_days};{self.buchhaltungskonto};{self.sk42_sphaere};{self.mwst_satz:.2f};{bill['email']}\n"
+                    line = f"{bill['mitglieds_no']};2;{bill_index+1};{item['bill_title']};{self.__normalize_date(self.billing_date)};{item_index+1};{item['item_title']};{item['item_description']};{item['quantity']};{self.__normalize_float(item['price'])};1;2;{self.due_days};;{self.__normalize_date(self.billing_date)};{self.__date_plus_days(self.billing_date, self.due_days)};31.12.2099;{self.__normalize_float(self.mwst_satz)};;;;{self.buchhaltungskonto};{self.sk42_sphaere};;;;;;{bill['email']};\r\n"
                     file.write(line)
