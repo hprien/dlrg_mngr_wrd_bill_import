@@ -24,12 +24,9 @@ python3 main.py
 - 40905 - Umsatzerlöse (z.B. Wachdienstbekleidung)
 - 42035 - Erlöse aus Teilnehmer-/Nutzungsgebühren
 
-ISO 8859-1, leere Zeile am Ende
-
 # abluaf
 ## Mitglieder exportieren
-Extras / Auswertungen:
-Berechtigung: `2_GR_Auswertungen`
+Extras / Auswertungen (Berechtigung: `2_GR_Auswertungen`):
 - Alle Mitglieder nach Name
 - Auswertung durchführen
 - Abfrage starten
@@ -37,8 +34,7 @@ Berechtigung: `2_GR_Auswertungen`
 - Datei öffnen
 
 ## import im DLRG-Manager
-Einstellungen / Finanzen / Rechnungsimport:
-Berechtigung: `2_GR_Rechnungen`
+Einstellungen / Finanzen / Rechnungsimport (Berechtigung: `2_GR_Rechnungen`):
 - Geschäftsbereich:
 - Art der Mitgliedsnummer: "Nummernkreis - Nummer"
 - Erste Spalte enthält Überschrift: "Ja"
@@ -46,15 +42,12 @@ Berechtigung: `2_GR_Rechnungen`
 - Importdatei: Rechnungen Ubstadt-Weiher
 
 ## Rechnungen erstellen
-Berechtigung: `2_GR_Beitragsverwaltung`
-Finanzen > Beiträge / Rechnungen > Abrechnungen
+Finanzen > Beiträge / Rechnungen > Abrechnungen (Berechtigung: `2_GR_Beitragsverwaltung`):
 - Sammellauf
 
 ## E-Mail Rechnungstemplate anpassen:
-Berechtigung: `2_GR_Buchhaltung_Konfig`
-Email Template in Einstellungen / Finanzen / Geschäftsbereiche
+Email Template in Einstellungen / Finanzen / Geschäftsbereiche (Berechtigung: `2_GR_Buchhaltung_Konfig`)
 
 ## Rechnungen per E-Mail versenden
-Berechtigung: `2_GR_Beitragsverwaltung`
-Finanzen > Beiträge / Rechnungen > Abrechnungen
+Finanzen > Beiträge / Rechnungen > Abrechnungen (Berechtigung: `2_GR_Beitragsverwaltung`):
 - E-Mail Versand
